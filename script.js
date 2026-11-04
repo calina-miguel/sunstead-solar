@@ -204,16 +204,16 @@ if ("IntersectionObserver" in window && !prefersReducedMotion) {
     element.classList.add("reveal");
     if (element.matches(".bundle-card, .step")) {
       element.classList.add(`reveal-delay-${(index % 3) + 1}`);
+      if (index % 3 === 0) element.classList.add("reveal-from-left");
+      if (index % 3 === 2) element.classList.add("reveal-from-right");
     }
   });
 
   const revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("is-visible");
-      revealObserver.unobserve(entry.target);
+      entry.target.classList.toggle("is-visible", entry.isIntersecting);
     });
-  }, { threshold: 0.12, rootMargin: "0px 0px -35px 0px" });
+  }, { threshold: 0.08, rootMargin: "0px 0px -8% 0px" });
 
   revealElements.forEach(element => revealObserver.observe(element));
 }
