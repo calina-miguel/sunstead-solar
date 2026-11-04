@@ -31,6 +31,7 @@ jobs:
         run: |
           mkdir public
           cp index.html styles.css script.js public/
+          sed -i "s/__BUILD_VERSION__/${GITHUB_SHA}/g" public/index.html
           cp -R assets public/assets
       - name: Upload site files
         uses: actions/upload-pages-artifact@v3

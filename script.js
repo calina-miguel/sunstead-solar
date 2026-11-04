@@ -211,6 +211,18 @@ const motionTargets = [
 ];
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
+function getDocumentTop(element) {
+  let top = 0;
+  let current = element;
+
+  while (current && current !== document.body) {
+    top += current.offsetTop;
+    current = current.offsetParent;
+  }
+
+  return top;
+}
+
 revealElements.forEach((element, index) => {
   element.classList.add("reveal", "scroll-motion");
   if (index % 3 === 0) element.classList.add("reveal-from-left");
@@ -220,17 +232,26 @@ motionTargets.forEach(element => element.classList.add("scroll-motion"));
 
 function updateScrollMotion() {
   const viewportHeight = window.innerHeight;
+  const measurements = motionTargets.map((element, index) => ({
+    element,
+    index,
+    top: getDocumentTop(element),
+    height: element.offsetHeight
+  }));
 
   if (heroPhoto) {
-    const rect = heroPhoto.getBoundingClientRect();
-    const progress = clamp((viewportHeight - rect.top) / (viewportHeight + rect.height), 0, 1);
+    const heroTop = getDocumentTop(heroPhoto);
+    const progress = clamp(
+      (window.scrollY + viewportHeight - heroTop) / (viewportHeight + heroPhoto.offsetHeight),
+      0,
+      1
+    );
     heroPhoto.style.setProperty("--scroll-parallax-y", `${-10 + progress * 22}%`);
   }
 
-  motionTargets.forEach((element, index) => {
-    const rect = element.getBoundingClientRect();
+  measurements.forEach(({ element, index, top, height }) => {
     const progress = clamp(
-      (viewportHeight - rect.top) / (viewportHeight + rect.height) + (index % 3) * 0.025,
+      (window.scrollY + viewportHeight - top) / (viewportHeight + height) + (index % 3) * 0.025,
       0,
       1
     );

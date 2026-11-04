@@ -16,7 +16,7 @@ These are creative suggestions only; check business-name, trademark, domain, and
 
 ## Preview
 
-Open `index.html` in a browser. There are no package installs, build steps, or runtime image requests. Scroll-linked fade/slide/scale reveals cover the page content, and the hero image, headline, payment label, and caption move at different rates for a pronounced parallax effect. Motion updates smoothly with scroll position in both directions on desktop and mobile, and respects reduced-motion preferences. Optimized solar photos are stored locally in `assets/`; the supplied WhatsApp images and archive are kept in the project folder but are not included in the public Pages deployment.
+Open `index.html` in a browser. There are no package installs, build steps, or runtime image requests. Scroll-linked fade/slide/scale reveals cover the page content, and the hero image, headline, payment label, and caption move at different rates for a pronounced parallax effect. Motion updates smoothly with scroll position in both directions on desktop and mobile, and respects reduced-motion preferences. The Pages workflow versions its CSS and JavaScript URLs on each deployment to prevent browsers from reusing stale animation code. Optimized solar photos are stored locally in `assets/`; the supplied WhatsApp images and archive are kept in the project folder but are not included in the public Pages deployment.
 
 ### Bundle photo credits
 
