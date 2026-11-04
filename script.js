@@ -198,6 +198,9 @@ const revealElements = document.querySelectorAll(
 );
 const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 const motionToggle = document.querySelector(".motion-toggle");
+const smoothScroll = typeof window.Lenis === "function"
+  ? new window.Lenis({ lerp: 0.1, smoothWheel: true, syncTouch: false })
+  : null;
 const heroPhoto = document.querySelector(".hero-photo");
 const heroCopy = document.querySelector(".hero-copy");
 const photoLabel = document.querySelector(".photo-label");
@@ -290,6 +293,31 @@ function updateScrollMotion() {
 
 let motionFrame = 0;
 let motionOverride = null;
+let smoothScrollFrame = 0;
+
+function runSmoothScrollFrame(time) {
+  if (!smoothScroll) return;
+  smoothScroll.raf(time);
+  smoothScrollFrame = window.requestAnimationFrame(runSmoothScrollFrame);
+}
+
+if (smoothScroll) {
+  smoothScroll.on("scroll", scheduleScrollMotion);
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener("click", event => {
+      if (!document.body.classList.contains("motion-ready")) return;
+      const target = document.getElementById(link.hash.slice(1));
+      if (!target) return;
+
+      event.preventDefault();
+      history.pushState(null, "", link.hash);
+      smoothScroll.scrollTo(target, {
+        offset: window.matchMedia("(max-width: 680px)").matches ? -72 : -85
+      });
+    });
+  });
+}
+
 function scheduleScrollMotion() {
   if (motionFrame || !document.body.classList.contains("motion-ready")) return;
   motionFrame = window.requestAnimationFrame(() => {
@@ -302,6 +330,15 @@ function setScrollMotionEnabled(enabled) {
   document.documentElement.classList.toggle("motion-enabled", enabled);
   document.documentElement.classList.toggle("motion-disabled", !enabled);
   document.body.classList.toggle("motion-ready", enabled);
+  if (smoothScroll) {
+    smoothScroll.options.smoothWheel = enabled;
+    if (enabled && !smoothScrollFrame) {
+      smoothScrollFrame = window.requestAnimationFrame(runSmoothScrollFrame);
+    } else if (!enabled && smoothScrollFrame) {
+      window.cancelAnimationFrame(smoothScrollFrame);
+      smoothScrollFrame = 0;
+    }
+  }
   motionToggle.setAttribute("aria-pressed", String(enabled));
   motionToggle.setAttribute("aria-label", enabled
     ? "Disable animations and smooth scrolling"

@@ -16,6 +16,11 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 85px; }
+html.lenis, html.lenis body { height: auto; }
+html.lenis { scroll-behavior: auto !important; }
+html.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+html.lenis.lenis-stopped { overflow: hidden; }
+html.lenis.lenis-smooth iframe { pointer-events: none; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; }
@@ -618,7 +623,7 @@ h2 em { color: #557a56; }
   :root:not(.motion-enabled) .hero-copy, :root:not(.motion-enabled) .photo-label, :root:not(.motion-enabled) .photo-caption { animation: none !important; }
   :root:not(.motion-enabled) .hero-photo { animation: none !important; transform: scale(1.015) !important; }
 }
-:root.motion-enabled { scroll-behavior: smooth !important; }
+:root.motion-enabled:not(.lenis) { scroll-behavior: smooth !important; }
 :root.motion-disabled { scroll-behavior: auto !important; }
 
 .bundle-card { display: flex; flex-direction: column; }
