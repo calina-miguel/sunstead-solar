@@ -197,6 +197,7 @@ const revealElements = document.querySelectorAll(
   ".intro-strip .strip-inner, .section-heading, .bundle-card, .bundle-disclaimer, .match-copy, .quiz-card, .step, .payment-orbit, .payment-copy, .payment-decoration, .contact-copy, .contact-form, .site-footer .footer-main, .site-footer .footer-bottom"
 );
 const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+const motionToggle = document.querySelector(".motion-toggle");
 const heroPhoto = document.querySelector(".hero-photo");
 const heroCopy = document.querySelector(".hero-copy");
 const photoLabel = document.querySelector(".photo-label");
@@ -223,6 +224,21 @@ function getDocumentTop(element) {
   return top;
 }
 
+let motionMeasurements = [];
+let heroMeasurement = null;
+
+function measureScrollTargets() {
+  motionMeasurements = motionTargets.map((element, index) => ({
+    element,
+    index,
+    top: getDocumentTop(element),
+    height: element.offsetHeight
+  }));
+  heroMeasurement = heroPhoto
+    ? { top: getDocumentTop(heroPhoto), height: heroPhoto.offsetHeight }
+    : null;
+}
+
 revealElements.forEach((element, index) => {
   element.classList.add("reveal", "scroll-motion");
   if (index % 3 === 0) element.classList.add("reveal-from-left");
@@ -232,26 +248,20 @@ motionTargets.forEach(element => element.classList.add("scroll-motion"));
 
 function updateScrollMotion() {
   const viewportHeight = window.innerHeight;
-  const measurements = motionTargets.map((element, index) => ({
-    element,
-    index,
-    top: getDocumentTop(element),
-    height: element.offsetHeight
-  }));
+  const scrollY = window.scrollY;
 
-  if (heroPhoto) {
-    const heroTop = getDocumentTop(heroPhoto);
+  if (heroPhoto && heroMeasurement) {
     const progress = clamp(
-      (window.scrollY + viewportHeight - heroTop) / (viewportHeight + heroPhoto.offsetHeight),
+      (scrollY + viewportHeight - heroMeasurement.top) / (viewportHeight + heroMeasurement.height),
       0,
       1
     );
     heroPhoto.style.setProperty("--scroll-parallax-y", `${-10 + progress * 22}%`);
   }
 
-  measurements.forEach(({ element, index, top, height }) => {
+  motionMeasurements.forEach(({ element, index, top, height }) => {
     const progress = clamp(
-      (window.scrollY + viewportHeight - top) / (viewportHeight + height) + (index % 3) * 0.025,
+      (scrollY + viewportHeight - top) / (viewportHeight + height) + (index % 3) * 0.025,
       0,
       1
     );
@@ -279,8 +289,9 @@ function updateScrollMotion() {
 }
 
 let motionFrame = 0;
+let motionOverride = null;
 function scheduleScrollMotion() {
-  if (motionFrame || motionPreference.matches) return;
+  if (motionFrame || !document.body.classList.contains("motion-ready")) return;
   motionFrame = window.requestAnimationFrame(() => {
     motionFrame = 0;
     updateScrollMotion();
@@ -288,17 +299,49 @@ function scheduleScrollMotion() {
 }
 
 function setScrollMotionEnabled(enabled) {
+  document.documentElement.classList.toggle("motion-enabled", enabled);
+  document.documentElement.classList.toggle("motion-disabled", !enabled);
   document.body.classList.toggle("motion-ready", enabled);
-  if (enabled) updateScrollMotion();
+  motionToggle.setAttribute("aria-pressed", String(enabled));
+  motionToggle.setAttribute("aria-label", enabled
+    ? "Disable animations and smooth scrolling"
+    : "Enable animations and smooth scrolling");
+  motionToggle.textContent = `Motion: ${enabled ? "On" : "Off"}`;
+  if (enabled) {
+    measureScrollTargets();
+    updateScrollMotion();
+  }
   else if (motionFrame) {
     window.cancelAnimationFrame(motionFrame);
     motionFrame = 0;
   }
 }
 
-setScrollMotionEnabled(!motionPreference.matches);
+setScrollMotionEnabled(true);
+motionToggle.addEventListener("click", () => {
+  motionOverride = !document.body.classList.contains("motion-ready");
+  setScrollMotionEnabled(motionOverride);
+});
 window.addEventListener("scroll", scheduleScrollMotion, { passive: true });
-window.addEventListener("resize", scheduleScrollMotion, { passive: true });
-motionPreference.addEventListener("change", event => setScrollMotionEnabled(!event.matches));
+window.addEventListener("resize", () => {
+  measureScrollTargets();
+  scheduleScrollMotion();
+}, { passive: true });
+window.addEventListener("load", () => {
+  measureScrollTargets();
+  scheduleScrollMotion();
+}, { once: true });
+if ("ResizeObserver" in window) {
+  const motionResizeObserver = new ResizeObserver(() => {
+    measureScrollTargets();
+    scheduleScrollMotion();
+  });
+  motionResizeObserver.observe(document.body);
+  motionTargets.forEach(element => motionResizeObserver.observe(element));
+  if (heroPhoto) motionResizeObserver.observe(heroPhoto);
+}
+motionPreference.addEventListener("change", event => {
+  if (motionOverride === null) setScrollMotionEnabled(!event.matches);
+});
 
 renderQuestion();
