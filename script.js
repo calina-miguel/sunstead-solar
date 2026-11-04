@@ -194,28 +194,90 @@ siteNav.querySelectorAll("a").forEach(link => link.addEventListener("click", () 
 document.querySelector("#current-year").textContent = String(new Date().getFullYear());
 
 const revealElements = document.querySelectorAll(
-  ".section-heading, .bundle-card, .match-copy, .quiz-card, .step, .payment-copy, .contact-copy, .contact-form"
+  ".intro-strip .strip-inner, .section-heading, .bundle-card, .bundle-disclaimer, .match-copy, .quiz-card, .step, .payment-orbit, .payment-copy, .payment-decoration, .contact-copy, .contact-form, .site-footer .footer-main, .site-footer .footer-bottom"
 );
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+const heroPhoto = document.querySelector(".hero-photo");
+const heroCopy = document.querySelector(".hero-copy");
+const photoLabel = document.querySelector(".photo-label");
+const photoCaption = document.querySelector(".photo-caption");
+const motionTargets = [
+  ...new Set([
+    ...revealElements,
+    heroCopy,
+    photoLabel,
+    photoCaption
+  ].filter(Boolean))
+];
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
-if ("IntersectionObserver" in window && !prefersReducedMotion) {
-  document.body.classList.add("reveal-ready");
-  revealElements.forEach((element, index) => {
-    element.classList.add("reveal");
-    if (element.matches(".bundle-card, .step")) {
-      element.classList.add(`reveal-delay-${(index % 3) + 1}`);
-      if (index % 3 === 0) element.classList.add("reveal-from-left");
-      if (index % 3 === 2) element.classList.add("reveal-from-right");
-    }
+revealElements.forEach((element, index) => {
+  element.classList.add("reveal", "scroll-motion");
+  if (index % 3 === 0) element.classList.add("reveal-from-left");
+  if (index % 3 === 2) element.classList.add("reveal-from-right");
+});
+motionTargets.forEach(element => element.classList.add("scroll-motion"));
+
+function updateScrollMotion() {
+  const viewportHeight = window.innerHeight;
+
+  if (heroPhoto) {
+    const rect = heroPhoto.getBoundingClientRect();
+    const progress = clamp((viewportHeight - rect.top) / (viewportHeight + rect.height), 0, 1);
+    heroPhoto.style.setProperty("--scroll-parallax-y", `${-10 + progress * 22}%`);
+  }
+
+  motionTargets.forEach((element, index) => {
+    const rect = element.getBoundingClientRect();
+    const progress = clamp(
+      (viewportHeight - rect.top) / (viewportHeight + rect.height) + (index % 3) * 0.025,
+      0,
+      1
+    );
+    const enter = clamp(progress / 0.18, 0, 1);
+    const exit = clamp((progress - 0.78) / 0.22, 0, 1);
+    const startY = element === heroCopy ? 52 : element === photoLabel ? -22 : element === photoCaption ? 24 : 44;
+    const endY = element === heroCopy ? -48 : element === photoLabel ? 30 : element === photoCaption ? -24 : -38;
+    const startOpacity = element === photoLabel ? 0.25 : 0;
+    const direction = element.classList.contains("reveal-from-left")
+      ? -28
+      : element.classList.contains("reveal-from-right")
+        ? 28
+        : 0;
+    const y = progress < 0.18 ? startY * (1 - enter) : progress > 0.78 ? endY * exit : 0;
+    const opacity = progress < 0.18
+      ? startOpacity + (1 - startOpacity) * enter
+      : progress > 0.78 ? 1 - exit : 1;
+    const scale = 0.97 + 0.03 * enter - 0.015 * exit;
+
+    element.style.setProperty("--scroll-opacity", String(opacity));
+    element.style.setProperty("--scroll-x", `${direction * (1 - enter)}px`);
+    element.style.setProperty("--scroll-y", `${y}px`);
+    element.style.setProperty("--scroll-scale", String(scale));
   });
-
-  const revealObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      entry.target.classList.toggle("is-visible", entry.isIntersecting);
-    });
-  }, { threshold: 0.08, rootMargin: "0px 0px -8% 0px" });
-
-  revealElements.forEach(element => revealObserver.observe(element));
 }
+
+let motionFrame = 0;
+function scheduleScrollMotion() {
+  if (motionFrame || motionPreference.matches) return;
+  motionFrame = window.requestAnimationFrame(() => {
+    motionFrame = 0;
+    updateScrollMotion();
+  });
+}
+
+function setScrollMotionEnabled(enabled) {
+  document.body.classList.toggle("motion-ready", enabled);
+  if (enabled) updateScrollMotion();
+  else if (motionFrame) {
+    window.cancelAnimationFrame(motionFrame);
+    motionFrame = 0;
+  }
+}
+
+setScrollMotionEnabled(!motionPreference.matches);
+window.addEventListener("scroll", scheduleScrollMotion, { passive: true });
+window.addEventListener("resize", scheduleScrollMotion, { passive: true });
+motionPreference.addEventListener("change", event => setScrollMotionEnabled(!event.matches));
 
 renderQuestion();

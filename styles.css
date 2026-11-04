@@ -513,30 +513,10 @@ h2 em { color: #557a56; }
 .footer-top:hover { color: var(--lime); }
 .form-note { font-size: 10px; }
 
-.reveal-ready .reveal { opacity: 0; translate: var(--reveal-x, 0px) 22px; transition: opacity .65s ease,translate .75s cubic-bezier(.22,1,.36,1); }
-.reveal-ready .reveal.is-visible { opacity: 1; translate: 0 0; }
-.reveal-ready .reveal-from-left { --reveal-x: -28px; }
-.reveal-ready .reveal-from-right { --reveal-x: 28px; }
-.reveal-ready .reveal-delay-1 { transition-delay: .1s; }
-.reveal-ready .reveal-delay-2 { transition-delay: .2s; }
-.reveal-ready .reveal-delay-3 { transition-delay: .3s; }
+.motion-ready .scroll-motion { animation: none; opacity: var(--scroll-opacity, 1); translate: var(--scroll-x, 0px) var(--scroll-y, 0px); scale: var(--scroll-scale, 1); }
+.motion-ready .hero-photo { transform: scale(1.2) translate3d(0, var(--scroll-parallax-y, -10%), 0); }
 @keyframes rise-in { from { opacity: 0; translate: 0 17px; } to { opacity: 1; translate: 0 0; } }
-@keyframes hero-parallax { from { transform: scale(1.08) translate3d(0,-2%,0); } to { transform: scale(1.08) translate3d(0,4%,0); } }
-@keyframes reveal-on-scroll {
-  0% { opacity: 0; translate: var(--reveal-x, 0px) 22px; }
-  15%, 85% { opacity: 1; translate: 0 0; }
-  100% { opacity: 0; translate: 0 -18px; }
-}
 @keyframes pulse-glow { 50% { box-shadow: 0 0 16px 3px rgba(214,239,141,.5); } }
-
-@supports (animation-timeline: view()) {
-  .reveal-ready .reveal {
-    animation: reveal-on-scroll linear both;
-    animation-timeline: view();
-    animation-range: entry 0% exit 100%;
-    transition: none;
-  }
-}
 
 @media (max-width: 900px) {
   .site-header { width: calc(100% - 36px); padding-inline: 15px; }
@@ -630,7 +610,8 @@ h2 em { color: #557a56; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .reveal-ready .reveal { opacity: 1; transform: none; translate: none; }
+  .motion-ready .scroll-motion { opacity: 1; transform: none; translate: none; scale: none; }
+  .hero-copy, .photo-label, .photo-caption { animation: none !important; }
   .hero-photo { animation: none !important; transform: scale(1.015) !important; }
 }
 
