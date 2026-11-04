@@ -16,7 +16,7 @@ These are creative suggestions only; check business-name, trademark, domain, and
 
 ## Preview
 
-Open `index.html` in a browser. There are no package installs, build steps, or runtime image requests. Scroll-triggered reveals and a native scroll-linked hero parallax add motion without a runtime library; both respect reduced-motion preferences. Optimized solar photos are stored locally in `assets/`; the supplied WhatsApp images and archive are kept in the project folder but are not included in the public Pages deployment.
+Open `index.html` in a browser. There are no package installs, build steps, or runtime image requests. Scroll-linked fade/slide reveals and hero parallax track scrolling in both directions, so they replay when revisiting sections; a lightweight observer fallback is used where scroll timelines aren’t supported. Motion respects reduced-motion preferences. Optimized solar photos are stored locally in `assets/`; the supplied WhatsApp images and archive are kept in the project folder but are not included in the public Pages deployment.
 
 ### Bundle photo credits
 
