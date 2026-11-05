@@ -203,13 +203,11 @@ const smoothScroll = typeof window.Lenis === "function"
   : null;
 const heroPhoto = document.querySelector(".hero-photo");
 const heroCopy = document.querySelector(".hero-copy");
-const photoLabel = document.querySelector(".photo-label");
 const photoCaption = document.querySelector(".photo-caption");
 const motionTargets = [
   ...new Set([
     ...revealElements,
     heroCopy,
-    photoLabel,
     photoCaption
   ].filter(Boolean))
 ];
