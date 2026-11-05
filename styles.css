@@ -632,6 +632,62 @@ h2 em { color: #557a56; }
 :root.motion-enabled:not(.lenis) { scroll-behavior: smooth !important; }
 :root.motion-disabled { scroll-behavior: auto !important; }
 
+.eyebrow { color: #536258; font-size: 11px; }
+.hero .eyebrow { color: #f0f5fa; }
+.photo-caption { color: #fff; font-size: 10px; text-shadow: 0 1px 4px rgba(8,20,32,.8); }
+.scroll-hint { color: #fff; font-size: 10px; }
+.strip-caption { color: #f0f5fa; font-size: 10px; }
+.heading-aside { color: #4f5e54; font-size: 14px; }
+.bundle-number, .bundle-type { color: #536258; font-size: 11px; }
+.bundle-desc { color: #4f5e54; font-size: 13px; }
+.bundle-spec > span { color: #536258; font-size: 10px; }
+.bundle-spec i { color: #536258; font-size: 11px; }
+.bundle-link { color: #24372b; font-size: 12px; }
+.card-scribble { color: #526647; font-size: 10px; }
+.bundle-disclaimer { color: #536258; font-size: 12px; }
+.match-copy > p:not(.eyebrow) { color: #e0eaf3; font-size: 14px; }
+.match-aside { color: #edf3f8; font-size: 11px; }
+.quiz-progress { color: #515c52; font-size: 10px; }
+.quiz-step-count { color: #515c52; }
+.quiz-subtitle, .quiz-result p { color: #515c52; font-size: 13px; }
+.quiz-option { color: #36443b; font-size: 12px; }
+.quiz-option span { color: #515c52; }
+.quiz-hint { color: #515c52; font-size: 10px; }
+.quiz-next { font-size: 12px; }
+.quiz-next:disabled { color: #465348; background: #e2e8df; box-shadow: none; opacity: 1; }
+.quiz-back { color: #465348; font-size: 12px; }
+.result-tag, .result-disclaimer { color: #515c52; font-size: 11px; }
+.quiz-result a { font-size: 12px; }
+.step > span { color: #536258; font-size: 10px; }
+.step p { color: #4f5e54; font-size: 13px; }
+.payment-band { background: linear-gradient(112deg,#294764,#3d5c78 57%,#304d69); }
+.payment-copy > p:not(.eyebrow) { color: #f2f6fa; font-size: 14px; }
+.payment-note { color: #e1eaf2; font-size: 12px; }
+.payment-decoration { color: #e1eaf2; font-size: 10px; }
+.contact-copy > p:not(.eyebrow) { color: #4f5e54; font-size: 14px; }
+.contact-detail { color: #536258; font-size: 10px; }
+.contact-detail strong { color: #24372b; font-size: 12px; }
+.contact-form label { color: #4f5e54; font-size: 11px; }
+.contact-form label span { color: #536258; }
+.contact-form input::placeholder, .contact-form textarea::placeholder { color: #59645d; opacity: 1; }
+.form-note { color: #536258; font-size: 12px; }
+.footer-bottom { color: #e0e8ef; font-size: 10px; }
+.footer-top { font-size: 12px; }
+
+@media (max-width: 680px) {
+  .site-nav > a:not(.nav-cta) { font-size: 13px; }
+  .hero .eyebrow { font-size: 10px; }
+  .hero-actions .button, .hero-actions .text-link { font-size: 12px; }
+  .photo-caption { font-size: 9px; }
+  .heading-aside { font-size: 13px; }
+  .bundle-disclaimer { font-size: 12px; }
+  .match-copy > p:not(.eyebrow), .contact-copy > p:not(.eyebrow) { font-size: 14px; }
+  .quiz-option { font-size: 12px; }
+  .step p { font-size: 13px; }
+  .contact-form label { font-size: 11px; }
+  .footer-bottom { font-size: 10px; }
+}
+
 .bundle-card { display: flex; flex-direction: column; }
 .bundle-spec { margin-bottom: 12px; }
 .bundle-link { position: relative; right: auto; bottom: auto; left: auto; display: block; flex: 0 0 auto; margin-top: auto; }
