@@ -268,9 +268,9 @@ function updateScrollMotion() {
     );
     const enter = clamp(progress / 0.18, 0, 1);
     const exit = clamp((progress - 0.78) / 0.22, 0, 1);
-    const startY = element === heroCopy ? 52 : element === photoLabel ? -22 : element === photoCaption ? 24 : 44;
-    const endY = element === heroCopy ? -48 : element === photoLabel ? 30 : element === photoCaption ? -24 : -38;
-    const startOpacity = element === photoLabel ? 0.25 : 0;
+    const startY = element === heroCopy ? 52 : element === photoCaption ? 24 : 44;
+    const endY = element === heroCopy ? -48 : element === photoCaption ? -24 : -38;
+    const startOpacity = 0;
     const direction = element.classList.contains("reveal-from-left")
       ? -28
       : element.classList.contains("reveal-from-right")
